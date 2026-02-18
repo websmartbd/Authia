@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authia - Enterprise PHP Licensing</title>
+    <link rel="icon" href="https://authia.hs.vc/security.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --dark: #020617;
+            --surface: #0f172a;
+            --border: #1e293b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark);
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Subtle Gradient Text */
+        .text-gradient {
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Clean Panel Style */
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+        }
+
+        /* Input Autofill Fix */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus,
+        input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 30px #0f172a inset !important;
+            -webkit-text-fill-color: white !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="selection:bg-indigo-500/30">
+
+    <div id="sidebar-overlay" onclick="toggleMobileMenu()"
+        class="fixed inset-0 bg-black/80 z-[60] hidden transition-opacity duration-300 opacity-0 backdrop-blur-sm">
+    </div>
+
+    <div id="mobile-sidebar"
+        class="fixed inset-y-0 left-0 w-72 bg-slate-900 border-r border-slate-800 z-[70] transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+        <div class="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-950">
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 bg-indigo-600 rounded flex items-center justify-center">
+                    <i class="fas fa-shield-halved text-white text-sm"></i>
+                </div>
+                <span class="text-lg font-bold tracking-tight text-white">Authia</span>
+            </div>
+            <button onclick="toggleMobileMenu()" class="text-slate-400 hover:text-white transition focus:outline-none">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto py-6 px-4 space-y-2">
+            <a href="#features" onclick="toggleMobileMenu()"
+                class="block px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white font-medium transition">
+                <i class="fas fa-star w-6 text-indigo-500/70"></i> Features
+            </a>
+            <a href="#doc" onclick="toggleMobileMenu()"
+                class="block px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white font-medium transition">
+                <i class="fas fa-play w-6 text-indigo-500/70"></i> Docs
+            </a>
+            <a href="https://github.com/websmartbd/Authia" target="_blank"
+                class="block px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white font-medium transition">
+                <i class="fab fa-github w-6 text-indigo-500/70"></i> GitHub
+            </a>
+        </div>
+
+        <div class="p-6 border-t border-slate-800 bg-slate-950">
+            <a href="#manage-license" onclick="toggleMobileMenu()"
+                class="block w-full text-center bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-lg transition shadow-lg shadow-indigo-900/20">
+                Get License
+            </a>
+            <div class="text-center mt-4">
+                <p class="text-[10px] text-slate-600 uppercase font-bold tracking-widest">v1.0.0 Stable</p>
+            </div>
+        </div>
+    </div>
+
+    <nav class="fixed top-0 w-full z-50 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 bg-indigo-600 rounded flex items-center justify-center">
+                    <i class="fas fa-shield-halved text-white text-sm"></i>
+                </div>
+                <span class="text-lg font-bold tracking-tight text-white">Authia</span>
+            </div>
+
+            <button onclick="toggleMobileMenu()" class="md:hidden text-slate-300 hover:text-white focus:outline-none">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+
+            <div class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-400">
+                <a href="#features" class="hover:text-white transition">Features</a>
+                <a href="#doc" class="hover:text-white transition">Docs</a>
+                <a href="https://github.com/websmartbd/Authia" target="_blank"
+                    class="hover:text-white transition flex items-center">
+                    <i class="fab fa-github mr-2"></i> GitHub
+                </a>
+                <a href="#manage-license"
+                    class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-md font-semibold transition text-xs uppercase tracking-wide">
+                    Get License
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="pt-32 pb-16 px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6 tracking-tight text-white leading-tight">
+                Secure your logic.<br>
+                <span class="text-gradient">Verify instantly.</span>
+            </h1>
+
+            <p class="text-lg text-slate-400 mb-8 max-w-2xl mx-auto leading-relaxed">
+                Authia is a lightweight, open-source licensing framework designed for PHP developers who need security
+                without the enterprise bloat.
+            </p>
+
+            <div class="flex justify-center gap-4">
+                <a href="#manage-license"
+                    class="bg-white text-slate-900 hover:bg-slate-200 px-6 py-2.5 rounded-md font-bold text-sm transition border border-transparent">
+                    Generate Key
+                </a>
+                <a href="https://github.com/websmartbd/Authia" target="_blank"
+                    class="bg-transparent text-white border border-slate-700 hover:border-slate-500 px-6 py-2.5 rounded-md font-medium text-sm transition flex items-center">
+                    <i class="fab fa-github mr-2"></i> GitHub Project
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <section id="doc" class="py-12 px-6 border-y border-slate-900 bg-slate-950/50">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex flex-col md:flex-row items-center gap-12">
+                <div class="w-full md:w-1/3 space-y-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-white mb-2">See it in Action</h2>
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            Watch how to deploy the framework in under 2 minutes using standard PHP configurations.
+                        </p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <button onclick="switchVideo('install')" id="btn-install"
+                            class="w-full text-left px-4 py-3 rounded border border-indigo-500/50 bg-indigo-500/10 text-white text-sm font-medium transition hover:bg-indigo-500/20">
+                            <i class="fas fa-terminal mr-3 text-indigo-400"></i> Server Installation
+                        </button>
+                        <button onclick="switchVideo('use')" id="btn-use"
+                            class="w-full text-left px-4 py-3 rounded border border-transparent hover:bg-slate-800 text-slate-400 text-sm font-medium transition">
+                            <i class="fas fa-code mr-3"></i> API Integration
+                        </button>
+                    </div>
+                </div>
+
+                <div class="w-full md:w-2/3">
+                    <div
+                        class="relative rounded-lg overflow-hidden border border-slate-800 bg-slate-900 shadow-2xl aspect-video group">
+                        <div id="video-install" class="absolute inset-0 flex items-center justify-center bg-slate-900">
+                            <div class="text-center">
+                                <div
+                                    class="w-16 h-16 rounded-full bg-indigo-600 flex items-center justify-center mb-4 mx-auto shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition cursor-pointer">
+                                    <i class="fas fa-play text-white ml-1"></i>
+                                </div>
+                                <span class="text-xs font-mono text-indigo-300">authia_install.mp4</span>
+                            </div>
+                        </div>
+
+                        <div id="video-use"
+                            class="absolute inset-0 flex items-center justify-center bg-slate-900 hidden">
+                            <div class="text-center">
+                                <div
+                                    class="w-16 h-16 rounded-full bg-emerald-600 flex items-center justify-center mb-4 mx-auto shadow-lg shadow-emerald-500/20 group-hover:scale-110 transition cursor-pointer">
+                                    <i class="fas fa-play text-white ml-1"></i>
+                                </div>
+                                <span class="text-xs font-mono text-emerald-300">authia_usage.mp4</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="py-12 px-6 border-b border-slate-900 bg-slate-950">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="panel p-6 rounded-lg hover:border-slate-600 transition duration-300">
+                <i class="fas fa-fingerprint text-indigo-500 text-xl mb-4"></i>
+                <h3 class="text-white font-bold mb-2">Argon2id Hashing</h3>
+                <p class="text-slate-400 text-sm">Industry-standard cryptography ensures your keys cannot be
+                    reverse-engineered.</p>
+            </div>
+            <div class="panel p-6 rounded-lg hover:border-slate-600 transition duration-300">
+                <i class="fas fa-bolt text-indigo-500 text-xl mb-4"></i>
+                <h3 class="text-white font-bold mb-2">Low Latency</h3>
+                <p class="text-slate-400 text-sm">Optimized SQL queries provide validation responses in under 50ms.</p>
+            </div>
+            <div class="panel p-6 rounded-lg hover:border-slate-600 transition duration-300">
+                <i class="fas fa-code-branch text-indigo-500 text-xl mb-4"></i>
+                <h3 class="text-white font-bold mb-2">Easy Integration</h3>
+                <p class="text-slate-400 text-sm">A single JSON endpoint handles all validation logic for your
+                    applications.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="max-w-6xl mx-auto px-6 py-16">
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+
+            <div class="panel rounded-xl overflow-hidden flex flex-col h-full shadow-2xl">
+                <div class="p-8 border-b border-slate-800 bg-slate-900/50">
+                    <h2 class="text-xl font-bold text-white mb-2 flex items-center">
+                        <i class="fas fa-terminal text-indigo-500 mr-3"></i> Developer API
+                    </h2>
+                    <p class="text-slate-400 text-sm">
+                        Validate licenses programmatically with a single secure POST request.
+                    </p>
+                </div>
+
+                <div class="p-8 space-y-6 flex-1 bg-[#0b1221]">
+
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-xs font-mono text-slate-500 uppercase tracking-wider">
+                            <span>cURL Request</span>
+                            <span>POST</span>
+                        </div>
+                        <div
+                            class="bg-slate-950 border border-slate-800 rounded-lg p-4 font-mono text-xs text-slate-300 leading-relaxed shadow-inner">
+                            <pre class="whitespace-pre-wrap"><span class="text-purple-400">curl</span> -X POST https://authia.dev/api \
+  -H <span class="text-emerald-400">"Content-Type: application/json"</span> \
+  -d <span class="text-amber-300">'{
+    "domain": "client-site.com"
+    "key": "bm-7a9s8d7f6g..."
+  }'</span></pre>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+
+                        <div
+                            class="bg-slate-950 border border-slate-800 rounded-lg p-4 font-mono text-xs text-slate-300 leading-relaxed shadow-inner">
+                            <pre class="whitespace-pre-wrap">{
+  <span class="text-purple-400">"status"</span>: <span class="text-emerald-400">"success"</span>,
+  <span class="text-purple-400">"data"</span>: {
+    <span class="text-purple-400">"domain"</span>: <span class="text-emerald-400">"example.com"</span>,
+    <span class="text-purple-400">"active"</span>: <span class="text-amber-300">1</span>,
+    <span class="text-purple-400">"message"</span>: <span class="text-emerald-400">"Domain is active"</span>,
+    <span class="text-purple-400">"delete"</span>: <span class="text-emerald-400">"no"</span>,
+    <span class="text-purple-400">"license_type"</span>: <span class="text-emerald-400">"yearly"</span>,
+    <span class="text-purple-400">"expiry_date"</span>: <span class="text-emerald-400">"2026-12-31"</span>
+  }
+}</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <section id="manage-license" class="h-full">
+                <div class="panel rounded-xl shadow-2xl overflow-hidden h-full flex flex-col">
+                    <div class="p-1 bg-slate-900 border-b border-slate-800 flex shrink-0">
+                        <button onclick="switchPortal('get')" id="tab-get"
+                            class="flex-1 py-3 text-sm font-medium text-white bg-slate-800 rounded shadow-sm transition-all">New
+                            License</button>
+                        <button onclick="switchPortal('find')" id="tab-find"
+                            class="flex-1 py-3 text-sm font-medium text-slate-500 hover:text-slate-300 transition-all">Recover
+                            Key</button>
+                    </div>
+
+                    <div class="p-8 bg-[#0f172a] flex-1 flex flex-col">
+
+                        <div id="license-result" class="hidden text-center fade-in">
+                            <div
+                                class="w-16 h-16 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-emerald-500/20">
+                                <i id="res-icon" class="fas fa-check text-2xl"></i>
+                            </div>
+                            <h4 id="res-title" class="text-2xl font-bold text-white mb-2">Success</h4>
+                            <p class="text-sm text-slate-400 mb-8">License assigned to <span id="res-domain"
+                                    class="text-white font-semibold"></span></p>
+
+                            <div
+                                class="bg-slate-950 border border-slate-800 p-6 rounded-xl mb-8 text-left relative overflow-hidden group">
+                                <div
+                                    class="absolute top-0 right-0 w-20 h-20 bg-emerald-500/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700">
+                                </div>
+                                <label
+                                    class="text-[10px] uppercase tracking-wider text-slate-500 font-bold block mb-2">Master
+                                    API Key</label>
+                                <div id="res-key"
+                                    class="font-mono text-lg text-emerald-400 break-all select-all font-bold"></div>
+                            </div>
+
+                            <button onclick="window.location.reload()"
+                                class="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-3 rounded-lg text-sm transition border border-slate-700">
+                                Generate Another
+                            </button>
+                        </div>
+
+                        <div id="form-container" class="flex-grow flex flex-col h-full">
+
+                            <form id="license-get-form" method="POST" action="index#manage-license"
+                                class="space-y-6 flex-grow flex flex-col h-full">
+                                <input type="hidden" name="csrf_token"
+                                    value="c315f5fdd7b3d93c7975993823031fd4ecd48b05e0b28fb34783ba111b9156db"> <input
+                                    type="hidden" name="get_license" value="1">
+
+                                <div id="get-error"
+                                    class="hidden text-xs text-red-400 bg-red-400/10 p-4 rounded-lg border border-red-400/20 mb-4">
+                                    <span class="error-msg"></span>
+                                </div>
+
+                                <div class="space-y-6">
+                                    <div class="space-y-2">
+                                        <label
+                                            class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Full
+                                            Name</label>
+                                        <input type="text" name="name" required placeholder="John Doe"
+                                            class="w-full bg-slate-950 border border-slate-800 text-white text-sm rounded-lg px-4 py-3 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition shadow-inner">
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label
+                                            class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Email
+                                            Address</label>
+                                        <input type="email" name="email" required placeholder="john@example.com"
+                                            class="w-full bg-slate-950 border border-slate-800 text-white text-sm rounded-lg px-4 py-3 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition shadow-inner">
+                                    </div>
+                                </div>
+
+                                <div class="space-y-2">
+                                    <label
+                                        class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Production
+                                        Domain</label>
+                                    <input type="text" name="domain" required placeholder="app.yoursite.com"
+                                        class="w-full bg-slate-950 border border-slate-800 text-white text-sm rounded-lg px-4 py-3 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition shadow-inner">
+                                </div>
+
+                                <button type="submit"
+                                    class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-lg text-sm transition shadow-xl shadow-indigo-900/20 mt-auto">
+                                    GENERATE LIFETIME KEY
+                                </button>
+                            </form>
+
+                            <form id="license-find-form" method="POST" action="index#manage-license"
+                                class="hidden space-y-6 flex-grow flex flex-col h-full">
+                                <input type="hidden" name="csrf_token"
+                                    value="c315f5fdd7b3d93c7975993823031fd4ecd48b05e0b28fb34783ba111b9156db"> <input
+                                    type="hidden" name="lookup_license" value="1">
+
+                                <div id="find-error"
+                                    class="hidden text-xs text-red-400 bg-red-400/10 p-4 rounded-lg border border-red-400/20 mb-4">
+                                    <span class="error-msg"></span>
+                                </div>
+
+                                <div class="space-y-6">
+                                    <div class="space-y-2">
+                                        <label
+                                            class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Registered
+                                            Email</label>
+                                        <input type="email" name="email" required placeholder="john@example.com"
+                                            class="w-full bg-slate-950 border border-slate-800 text-white text-sm rounded-lg px-4 py-3 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition shadow-inner">
+                                    </div>
+
+                                    <div class="space-y-2">
+                                        <label
+                                            class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Licensed
+                                            Domain</label>
+                                        <input type="text" name="domain" required placeholder="app.yoursite.com"
+                                            class="w-full bg-slate-950 border border-slate-800 text-white text-sm rounded-lg px-4 py-3 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition shadow-inner">
+                                    </div>
+                                </div>
+
+                                <button type="submit"
+                                    class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-4 rounded-lg text-sm transition border border-slate-700 mt-auto">
+                                    RECOVER EXISTING KEY
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div class="text-center py-8 space-y-2">
+        <div class="text-[10px] text-slate-600 uppercase tracking-widest font-bold">
+            &copy; 2026 Authia Project &bull; MIT License
+        </div>
+        <div class="text-[11px] text-slate-500 font-medium">
+            Made with <i class="fas fa-heart text-red-500/80 mx-0.5"></i> by <a
+                href="https://www.facebook.com/bmshifat0" target="_blank"
+                class="text-indigo-400 hover:text-indigo-300 transition">B.M Shifat</a>
+        </div>
+    </div>
+
+    <script>
+        // Mobile Menu Toggle Logic
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('mobile-sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            const isClosed = sidebar.classList.contains('-translate-x-full');
+
+            if (isClosed) {
+                // Open Menu
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+                // Small delay to allow display:block to apply before opacity transition
+                setTimeout(() => {
+                    overlay.classList.remove('opacity-0');
+                }, 10);
+            } else {
+                // Close Menu
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('opacity-0');
+                // Wait for transition to finish before hiding
+                setTimeout(() => {
+                    overlay.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        // Video Switching Logic
+        function switchVideo(type) {
+            const installBtn = document.getElementById('btn-install');
+            const useBtn = document.getElementById('btn-use');
+            const installVid = document.getElementById('video-install');
+            const useVid = document.getElementById('video-use');
+
+            if (type === 'install') {
+                installVid.classList.remove('hidden');
+                useVid.classList.add('hidden');
+
+                installBtn.classList.add('border-indigo-500/50', 'bg-indigo-500/10', 'text-white');
+                installBtn.classList.remove('border-transparent', 'hover:bg-slate-800', 'text-slate-400');
+
+                useBtn.classList.remove('border-indigo-500/50', 'bg-indigo-500/10', 'text-white');
+                useBtn.classList.add('border-transparent', 'hover:bg-slate-800', 'text-slate-400');
+            } else {
+                installVid.classList.add('hidden');
+                useVid.classList.remove('hidden');
+
+                useBtn.classList.add('border-emerald-500/50', 'bg-emerald-500/10', 'text-white');
+                useBtn.classList.remove('border-transparent', 'hover:bg-slate-800', 'text-slate-400');
+
+                installBtn.classList.remove('border-indigo-500/50', 'bg-indigo-500/10', 'text-white');
+                installBtn.classList.add('border-transparent', 'hover:bg-slate-800', 'text-slate-400');
+            }
+        }
+
+        // License Form Switching Logic
+        function switchPortal(type) {
+            const getBtn = document.getElementById('tab-get');
+            const findBtn = document.getElementById('tab-find');
+            const getForm = document.getElementById('license-get-form');
+            const findForm = document.getElementById('license-find-form');
+
+            if (type === 'get') {
+                getForm.classList.remove('hidden');
+                findForm.classList.add('hidden');
+                getBtn.classList.replace('bg-slate-800', 'bg-indigo-600');
+                getBtn.classList.add('shadow-md');
+
+                findBtn.classList.replace('bg-indigo-600', 'bg-slate-800');
+                findBtn.classList.remove('shadow-md');
+            } else {
+                getForm.classList.add('hidden');
+                findForm.classList.remove('hidden');
+
+                findBtn.classList.replace('bg-slate-800', 'bg-indigo-600');
+                findBtn.classList.add('shadow-md');
+
+                getBtn.classList.replace('bg-indigo-600', 'bg-slate-800');
+                getBtn.classList.remove('shadow-md');
+            }
+        }
+
+        // Initialize default tab state
+        document.addEventListener('DOMContentLoaded', () => {
+            const getBtn = document.getElementById('tab-get');
+            getBtn.classList.replace('bg-slate-800', 'bg-indigo-600');
+            getBtn.classList.add('shadow-md');
+        });
+
+        // AJAX Form Handling
+        async function handleLicenseForm(e) {
+            e.preventDefault();
+            const form = e.target;
+            const btn = form.querySelector('button[type="submit"]');
+            const originalBtnContent = btn.innerHTML;
+            const errorDiv = form.id === 'license-get-form' ? document.getElementById('get-error') : document.getElementById('find-error');
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> Processing';
+            errorDiv.classList.add('hidden');
+
+            try {
+                const formData = new FormData(form);
+                const response = await fetch('index.php', {
+                    method: 'POST',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    document.getElementById('form-container').classList.add('hidden');
+                    const resDiv = document.getElementById('license-result');
+                    resDiv.classList.remove('hidden');
+
+                    document.getElementById('res-domain').textContent = result.data.domain;
+                    document.getElementById('res-key').textContent = result.data.key;
+                    document.getElementById('res-title').textContent = result.data.is_recovery ? 'Key Recovered' : 'Key Activated';
+                } else {
+                    errorDiv.classList.remove('hidden');
+                    errorDiv.querySelector('.error-msg').textContent = result.message;
+                }
+            } catch (err) {
+                errorDiv.classList.remove('hidden');
+                errorDiv.querySelector('.error-msg').textContent = 'Connection failed.';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalBtnContent;
+            }
+        }
+
+        if (document.getElementById('license-get-form')) {
+            document.getElementById('license-get-form').addEventListener('submit', handleLicenseForm);
+            document.getElementById('license-find-form').addEventListener('submit', handleLicenseForm);
+        }
+    </script>
+</body>
+
+</html>

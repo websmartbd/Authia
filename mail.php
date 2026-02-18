@@ -101,6 +101,7 @@ if (!$smtp) {
             document.documentElement.classList.remove('dark')
         }
     </script>
+    <link rel="icon" type="image/png" href="https://authia.hs.vc/security.png">
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
 

@@ -18,9 +18,7 @@ $page_titles = [
 $mobile_title = $page_titles[$current_page] ?? 'Authia Admin';
 ?>
 <div class="md:hidden fixed top-0 inset-x-0 z-40 h-16 bg-white dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4">
-    <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20 z-10">
-        <i class="fas fa-shield-halved text-white text-xs"></i>
-    </div>
+    <img src="https://authia.hs.vc/security.png" alt="Authia" class="w-8 h-8">
     
     <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
         <span class="font-bold text-lg text-slate-900 dark:text-white truncate px-12"><?php echo $mobile_title; ?></span>
@@ -37,9 +35,7 @@ $mobile_title = $page_titles[$current_page] ?? 'Authia Admin';
   <!-- Logo Area -->
   <div class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 backdrop-blur-sm">
     <div class="flex items-center space-x-3">
-        <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
-            <i class="fas fa-shield-halved text-white text-sm"></i>
-        </div>
+        <img src="https://authia.hs.vc/security.png" alt="Authia" class="w-8 h-8">
         <span class="text-lg font-bold tracking-tight text-slate-900 dark:text-white font-sans">Authia</span>
     </div>
     <button id="close-sidebar" class="md:hidden ml-auto text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition focus:outline-none">
@@ -92,10 +88,10 @@ $mobile_title = $page_titles[$current_page] ?? 'Authia Admin';
 
       <div id="settings-submenu" class="pl-4 pr-2 space-y-1 overflow-hidden transition-all duration-300 <?php echo ($current_page == 'change-password.php' || $current_page == 'mail.php') ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'; ?>">
         <div class="border-l border-slate-200 dark:border-slate-800 ml-5 pl-4 space-y-1 py-1">
-            <a href="mail" class="block py-2 text-sm transition-colors duration-200 <?php echo ($current_page == 'mail.php') ? 'text-white font-medium' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'; ?>">
+            <a href="mail" class="block py-2 text-sm transition-colors duration-200 <?php echo ($current_page == 'mail.php') ? 'text-indigo-600 dark:text-white font-medium' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'; ?>">
             SMTP Settings
             </a>
-            <a href="change-password" class="block py-2 text-sm transition-colors duration-200 <?php echo ($current_page == 'change-password.php') ? 'text-white font-medium' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'; ?>">
+            <a href="change-password" class="block py-2 text-sm transition-colors duration-200 <?php echo ($current_page == 'change-password.php') ? 'text-indigo-600 dark:text-white font-medium' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'; ?>">
             Change Password
             </a>
         </div>

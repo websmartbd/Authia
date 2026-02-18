@@ -132,6 +132,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             document.documentElement.classList.add('dark');
         }
     </script>
+    <link rel="icon" type="image/png" href="https://authia.hs.vc/security.png">
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
 

@@ -177,6 +177,7 @@ $conn->close();
     .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); }
     .otp-input:focus { letter-spacing: 0.5em; }
   </style>
+    <link rel="icon" type="image/png" href="https://authia.hs.vc/security.png">
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex items-center justify-center p-6 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-indigo-500/10 via-transparent to-transparent">
 

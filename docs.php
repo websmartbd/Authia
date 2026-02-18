@@ -54,6 +54,7 @@ if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
             }
         }
     </style>
+    <link rel="icon" type="image/png" href="https://authia.hs.vc/security.png">
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans antialiased min-h-screen">
     <!-- Navigation -->
