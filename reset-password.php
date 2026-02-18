@@ -142,246 +142,237 @@ $conn->close();
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <title>Reset Password - Authenticator</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-        }
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            position: relative;
-            overflow: hidden;
-        }
-        .gradient-bg::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
-            opacity: 0.3;
-        }
-        .form-input:focus {
-            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
-            transition: all 0.2s ease;
-        }
-        .form-container {
-            animation: fadeIn 0.6s ease-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fadeIn {
-            animation: fadeIn 1s ease-out;
-        }
-        .animate-pulse {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-        .login-btn {
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .login-btn:after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 5px;
-            height: 5px;
-            background: rgba(255, 255, 255, 0.5);
-            opacity: 0;
-            border-radius: 100%;
-            transform: scale(1, 1) translate(-50%);
-            transform-origin: 50% 50%;
-        }
-        .login-btn:focus:not(:active)::after {
-            animation: ripple 1s ease-out;
-        }
-        @keyframes ripple {
-            0% { transform: scale(0, 0); opacity: 0.5; }
-            20% { transform: scale(25, 25); opacity: 0.3; }
-            100% { opacity: 0; transform: scale(40, 40); }
-        }
-        .otp-input:focus { letter-spacing: 0.4em; }
-        @media (max-width: 640px) {
-            .form-container {
-                padding: 1.5rem;
-                margin: 0.5rem;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Authia - Recovery Protocol</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                fontFamily: {
+                    sans: ['Inter', 'sans-serif'],
+                    mono: ['JetBrains Mono', 'monospace'],
+                },
             }
         }
-    </style>
+    }
+  </script>
+  <script>
+    if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; transition: background-color 0.3s, color 0.3s; }
+    .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); }
+    .otp-input:focus { letter-spacing: 0.5em; }
+  </style>
 </head>
-<body class="min-h-screen bg-gray-50 flex flex-col">
-    <div class="flex min-h-screen">
-        <!-- Left Side - Image/Pattern (Matching login.php) -->
-        <div class="hidden lg:flex lg:w-1/2 gradient-bg items-center justify-center">
-            <div class="text-white text-center px-12 z-10 animate-fadeIn">
-                <div class="mb-8 animate-pulse">
-                    <i class="fas fa-shield-alt text-5xl mb-4 opacity-90"></i>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex items-center justify-center p-6 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-indigo-500/10 via-transparent to-transparent">
+
+    <!-- Theme Toggle Fixed -->
+    <button id="theme-toggle" class="fixed top-6 right-6 p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:scale-110 transition-all z-50">
+        <i class="fas fa-moon dark:hidden text-xs"></i>
+        <i class="fas fa-sun hidden dark:block text-xs"></i>
+    </button>
+
+    <div class="w-full max-w-5xl flex flex-col lg:flex-row bg-white dark:bg-slate-900 rounded-[3rem] overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800">
+        
+        <!-- Left Panel: Contextual Branding -->
+        <div class="hidden lg:flex lg:w-1/2 gradient-bg p-16 flex-col justify-between relative overflow-hidden text-white">
+            <div class="absolute inset-0 opacity-10 pointer-events-none">
+                <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="1"/>
+                        </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#grid)" />
+                </svg>
+            </div>
+
+            <div class="z-10 space-y-6">
+                <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center border border-white/10 backdrop-blur-sm">
+                    <i class="fas fa-user-lock text-3xl"></i>
                 </div>
-                <h1 class="text-4xl font-bold mb-4">Security Center</h1>
-                <p class="text-xl opacity-90 mb-6">Recover your access with our secure verification system</p>
-                <div class="flex justify-center space-x-6 mb-6">
-                    <div class="text-center">
-                        <i class="fas fa-envelope-open-text text-3xl mb-2"></i>
-                        <p class="text-sm">Verify</p>
+                <div class="space-y-2">
+                    <h1 class="text-4xl font-extrabold tracking-tight">Access Recovery</h1>
+                    <p class="text-slate-400 text-lg">Authorization reset protocol for strategic assets.</p>
+                </div>
+            </div>
+
+            <div class="z-10 space-y-8">
+                <div class="flex flex-col space-y-6">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-black <?php echo ($step === 'request' ? 'bg-indigo-500 ring-4 ring-indigo-500/30' : 'opacity-50'); ?>">1</div>
+                        <p class="text-xs font-bold uppercase tracking-widest <?php echo ($step === 'request' ? 'text-white' : 'text-slate-500'); ?>">Identify Vector</p>
                     </div>
-                    <div class="text-center">
-                        <i class="fas fa-user-lock text-3xl mb-2"></i>
-                        <p class="text-sm">Identity</p>
+                    <div class="flex items-center space-x-4">
+                        <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-black <?php echo ($step === 'verify' ? 'bg-indigo-500 ring-4 ring-indigo-500/30' : 'opacity-50'); ?>">2</div>
+                        <p class="text-xs font-bold uppercase tracking-widest <?php echo ($step === 'verify' ? 'text-white' : 'text-slate-500'); ?>">Validate Token</p>
                     </div>
-                    <div class="text-center">
-                        <i class="fas fa-redo text-3xl mb-2"></i>
-                        <p class="text-sm">Restore</p>
+                    <div class="flex items-center space-x-4">
+                        <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-black <?php echo ($step === 'reset' ? 'bg-indigo-500 ring-4 ring-indigo-500/30' : 'opacity-50'); ?>">3</div>
+                        <p class="text-xs font-bold uppercase tracking-widest <?php echo ($step === 'reset' ? 'text-white' : 'text-slate-500'); ?>">Re-Initialize Cipher</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-black <?php echo ($step === 'complete' ? 'bg-emerald-500 ring-4 ring-emerald-500/30' : 'opacity-50'); ?>"><i class="fas fa-check text-[10px]"></i></div>
+                        <p class="text-xs font-bold uppercase tracking-widest <?php echo ($step === 'complete' ? 'text-white' : 'text-slate-500'); ?>">Integrity Restored</p>
                     </div>
                 </div>
-                <div class="w-16 h-1 bg-white opacity-50 mx-auto rounded-full"></div>
+                <div class="flex items-center space-x-2 text-slate-500 text-[10px] font-bold uppercase tracking-[0.3em]">
+                    <div class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></div>
+                    <span>Secure Synchronization Active</span>
+                </div>
             </div>
         </div>
 
-        <!-- Right Side - Functional Form -->
-        <div class="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-6">
-            <div class="w-full max-w-md px-6 sm:px-8 py-8 sm:py-10 bg-white rounded-xl shadow-lg form-container backdrop-blur-sm bg-white/95">
+        <!-- Right Panel: Dynamic Interaction -->
+        <div class="w-full lg:w-1/2 p-10 lg:p-16 flex flex-col justify-center bg-slate-50/50 dark:bg-slate-900/50">
+            <div class="max-w-md mx-auto w-full space-y-10">
                 
-                <!-- Step Header -->
-                <div class="text-center mb-8">
-                    <div class="inline-block p-3 rounded-full bg-indigo-100 mb-4">
-                        <?php if ($step === 'request'): ?>
-                            <i class="fas fa-key text-3xl text-indigo-600"></i>
-                        <?php elseif ($step === 'verify'): ?>
-                            <i class="fas fa-envelope-open-text text-3xl text-indigo-600"></i>
-                        <?php elseif ($step === 'reset'): ?>
-                            <i class="fas fa-lock text-3xl text-indigo-600"></i>
-                        <?php else: ?>
-                            <i class="fas fa-check-circle text-3xl text-green-500"></i>
-                        <?php endif; ?>
-                    </div>
-                    
-                    <h2 class="text-3xl font-bold text-gray-900">
+                <!-- Status Header -->
+                <div class="space-y-2 text-center lg:text-left">
+                    <h2 class="text-3xl font-extrabold tracking-tight">
                         <?php 
-                        if ($step === 'request') echo "Reset Password";
-                        elseif ($step === 'verify') echo "Verify Code";
-                        elseif ($step === 'reset') echo "New Password";
-                        else echo "Success!";
+                        if ($step === 'request') echo "Vector Initialization";
+                        elseif ($step === 'verify') echo "Token Validation";
+                        elseif ($step === 'reset') echo "Cipher Propagation";
+                        else echo "Session Restored";
                         ?>
                     </h2>
+                    <p class="text-slate-500 dark:text-slate-400">
+                        <?php 
+                        if ($step === 'request') echo "Specify your unique identifier to trigger an authentication override.";
+                        elseif ($step === 'verify') echo "Verify the high-security transmission sent to your primary node.";
+                        elseif ($step === 'reset') echo "Declare a new operational cipher to secure your administrative enclave.";
+                        else echo "Credential synchronization is complete. Strategic access is now available.";
+                        ?>
+                    </p>
                 </div>
 
-                <!-- Messages -->
+                <!-- Strategic Feedback -->
                 <?php if ($error_message): ?>
-                    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-6 flex items-center animate-fadeIn">
-                        <i class="fas fa-exclamation-triangle mr-3"></i>
-                        <p class="text-sm"><?php echo InputValidator::escapeHtml($error_message); ?></p>
-                    </div>
+                <div class="bg-red-500/10 border border-red-500/20 p-4 rounded-2xl flex items-center space-x-3 text-red-600 dark:text-red-400 animate-bounce">
+                    <i class="fas fa-radiation text-sm"></i>
+                    <p class="text-[10px] font-black uppercase tracking-widest"><?php echo InputValidator::escapeHtml($error_message); ?></p>
+                </div>
                 <?php endif; ?>
 
                 <?php if ($success_message): ?>
-                    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg mb-6 flex items-center animate-fadeIn">
-                        <i class="fas fa-check-circle mr-3"></i>
-                        <p class="text-sm"><?php echo InputValidator::escapeHtml($success_message); ?></p>
-                    </div>
+                <div class="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-2xl flex items-center space-x-3 text-emerald-600 dark:text-emerald-400 animate-pulse">
+                    <i class="fas fa-circle-check text-sm"></i>
+                    <p class="text-[10px] font-black uppercase tracking-widest"><?php echo InputValidator::escapeHtml($success_message); ?></p>
+                </div>
                 <?php endif; ?>
 
                 <?php if ($step === 'complete'): ?>
-                    <div class="text-center space-y-6">
-                        <p class="text-gray-600">Your password has been changed successfully. You can now return to the login page.</p>
-                        <a href="login" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition-all duration-300">
-                            Back to Login
-                        </a>
+                <div class="space-y-6 pt-6 animate-fadeIn">
+                    <div class="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto text-emerald-500 shadow-xl shadow-emerald-500/20">
+                        <i class="fas fa-lock-open text-3xl"></i>
                     </div>
+                    <a href="login" class="w-full py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-3xl text-xs font-bold uppercase tracking-widest transition-all hover:scale-[1.02] shadow-xl text-center flex items-center justify-center space-x-2">
+                        <span>Initiate Strategic Session</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
                 <?php else: ?>
-                    <form method="POST" class="space-y-6">
-                        <?php echo CSRFProtection::getTokenField(); ?>
-                        
-                        <?php if ($step === 'request'): ?>
-                            <input type="hidden" name="action" value="request_code">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Username or Email</label>
-                                <div class="relative rounded-md shadow-sm">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <i class="fas fa-user text-indigo-500"></i>
-                                    </div>
-                                    <input type="text" name="login_input" required 
-                                        class="form-input block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm transition-all duration-200"
-                                        placeholder="Enter your credentials">
-                                </div>
-                            </div>
-                            <button type="submit" id="submitBtn" class="login-btn w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition-all duration-300">
-                                <span><i class="fas fa-paper-plane mr-2"></i> Send Reset Code</span>
-                                <span id="loadingIndicator" class="hidden ml-2"><i class="fas fa-circle-notch fa-spin"></i></span>
-                            </button>
+                <form method="POST" class="space-y-8">
+                    <?php echo CSRFProtection::getTokenField(); ?>
 
-                        <?php elseif ($step === 'verify'): ?>
-                            <input type="hidden" name="action" value="verify_code">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1 text-center">6-Digit Verification Code</label>
-                                <input type="text" name="otp_code" required maxlength="6" 
-                                    class="otp-input block w-full text-center text-3xl font-bold py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 tracking-[0.4em]"
+                    <?php if ($step === 'request'): ?>
+                        <input type="hidden" name="action" value="request_code">
+                        <div class="space-y-2 group">
+                            <label for="login_input" class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Operational ID</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-indigo-500 transition-colors">
+                                    <i class="fas fa-id-badge text-xs"></i>
+                                </div>
+                                <input type="text" name="login_input" id="login_input" required 
+                                    class="w-full pl-11 pr-4 py-4 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-3xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm font-medium"
+                                    placeholder="Username or System Email">
+                            </div>
+                        </div>
+                        <button type="submit" id="submitBtn" class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-3xl text-xs font-bold uppercase tracking-widest transition-all shadow-xl shadow-indigo-600/20 active:scale-[0.98] flex items-center justify-center space-x-3 group">
+                            <span>Dispatch Recovery Token</span>
+                            <i id="loadingIndicator" class="fas fa-circle-notch fa-spin hidden"></i>
+                            <i class="fas fa-paper-plane text-[10px] group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"></i>
+                        </button>
+
+                    <?php elseif ($step === 'verify'): ?>
+                        <input type="hidden" name="action" value="verify_code">
+                        <div class="space-y-6">
+                            <div class="text-center space-y-2">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Temporal Token Verification</label>
+                                <input type="text" name="otp_code" id="otp_code" required maxlength="6" 
+                                    class="otp-input w-full text-center text-4xl font-black py-6 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-[2rem] focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all tracking-[0.3em] font-mono text-indigo-600"
                                     placeholder="000000">
                             </div>
-                            <button type="submit" id="submitBtn" class="login-btn w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition-all duration-300">
-                                <span>Verify Code <i class="fas fa-arrow-right ml-2"></i></span>
-                                <span id="loadingIndicator" class="hidden ml-2"><i class="fas fa-circle-notch fa-spin"></i></span>
+                            <button type="submit" id="submitBtn" class="w-full py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-3xl text-xs font-bold uppercase tracking-widest transition-all shadow-xl active:scale-[0.98] flex items-center justify-center space-x-3">
+                                <span>Validate Protocol</span>
+                                <i id="loadingIndicator" class="fas fa-circle-notch fa-spin hidden"></i>
                             </button>
-                            <div class="text-center">
-                                <a href="?restart=1" class="text-sm text-indigo-600 hover:text-indigo-500 font-medium">
-                                    <i class="fas fa-redo-alt mr-1"></i> Resend code
+                            <div class="text-center pt-4">
+                                <a href="?restart=1" class="text-[10px] font-bold text-indigo-500 hover:text-indigo-400 uppercase tracking-widest transition-colors flex items-center justify-center space-x-2 group">
+                                    <i class="fas fa-rotate-left group-hover:rotate-180 transition-transform"></i>
+                                    <span>Signal Redispatch</span>
                                 </a>
                             </div>
+                        </div>
 
-                        <?php elseif ($step === 'reset'): ?>
-                            <input type="hidden" name="action" value="reset_password">
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
-                                    <div class="relative rounded-md shadow-sm">
-                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <i class="fas fa-lock text-indigo-500"></i>
-                                        </div>
-                                        <input type="password" id="new_password" name="new_password" required minlength="6"
-                                            class="form-input block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm transition-all duration-200">
-                                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
-                                            <i id="toggleNewPassword" class="fas fa-eye text-gray-400 hover:text-indigo-500 transition-colors duration-200"></i>
-                                        </div>
+                    <?php elseif ($step === 'reset'): ?>
+                        <input type="hidden" name="action" value="reset_password">
+                        <div class="space-y-6">
+                            <div class="space-y-2 group">
+                                <label for="new_password" class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">New Strategic Cipher</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-indigo-500 transition-colors">
+                                        <i class="fas fa-shield-halved text-xs"></i>
                                     </div>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
-                                    <div class="relative rounded-md shadow-sm">
-                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <i class="fas fa-check-double text-indigo-500"></i>
-                                        </div>
-                                        <input type="password" id="confirm_password" name="confirm_password" required minlength="6"
-                                            class="form-input block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm transition-all duration-200">
-                                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
-                                            <i id="toggleConfirmPassword" class="fas fa-eye text-gray-400 hover:text-indigo-500 transition-colors duration-200"></i>
-                                        </div>
-                                    </div>
+                                    <input type="password" id="new_password" name="new_password" required minlength="6"
+                                        class="w-full pl-11 pr-12 py-4 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm font-medium font-mono">
+                                    <button type="button" onclick="toggleCipher('new_password', this)" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-indigo-500 transition-colors">
+                                        <i class="fas fa-eye text-xs"></i>
+                                    </button>
                                 </div>
                             </div>
-                            <button type="submit" id="submitBtn" class="login-btn w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition-all duration-300">
-                                <span>Update Password <i class="fas fa-save ml-2"></i></span>
-                                <span id="loadingIndicator" class="hidden ml-2"><i class="fas fa-circle-notch fa-spin"></i></span>
+                            <div class="space-y-2 group">
+                                <label for="confirm_password" class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Synchronize Verification</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-indigo-500 transition-colors">
+                                        <i class="fas fa-fingerprint text-xs"></i>
+                                    </div>
+                                    <input type="password" id="confirm_password" name="confirm_password" required minlength="6"
+                                        class="w-full pl-11 pr-12 py-4 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm font-medium font-mono">
+                                    <button type="button" onclick="toggleCipher('confirm_password', this)" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-indigo-500 transition-colors">
+                                        <i class="fas fa-eye text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button type="submit" id="submitBtn" class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-3xl text-xs font-bold uppercase tracking-widest transition-all shadow-xl shadow-indigo-600/20 active:scale-[0.98] flex items-center justify-center space-x-3">
+                                <span>Commit Cipher Rotation</span>
+                                <i id="loadingIndicator" class="fas fa-circle-notch fa-spin hidden"></i>
                             </button>
-                        <?php endif; ?>
-                    </form>
+                        </div>
+                    <?php endif; ?>
+                </form>
                 <?php endif; ?>
 
-                <!-- Back Link -->
-                <div class="mt-10 pt-8 border-t border-gray-100 text-center">
-                    <a href="login" class="text-sm font-medium text-gray-500 hover:text-indigo-600 transition-colors duration-200">
-                        <i class="fas fa-arrow-left mr-2"></i> Back to Login Page
+                <!-- Operational Termination -->
+                <div class="mt-10 pt-10 border-t border-slate-200 dark:border-slate-800 text-center">
+                    <a href="login" class="text-[10px] font-bold text-slate-400 hover:text-indigo-600 uppercase tracking-widest transition-colors flex items-center justify-center space-x-2 group">
+                        <i class="fas fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+                        <span>Return to Strategic Entry</span>
                     </a>
                 </div>
             </div>
@@ -389,36 +380,45 @@ $conn->close();
     </div>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
+        // Password visibility toggle
+        function toggleCipher(id, btn) {
+            const input = document.getElementById(id);
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fas fa-eye-slash text-xs';
+            } else {
+                input.type = 'password';
+                icon.className = 'fas fa-eye text-xs';
+            }
+        }
+
+        // Theme Toggle Support
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+
+        // Form Submission Feedback
         const form = document.querySelector('form');
         if (form) {
             form.addEventListener('submit', function() {
                 const btn = document.getElementById('submitBtn');
-                const loading = document.getElementById('loadingIndicator');
-                if (btn && loading) {
-                    btn.disabled = true;
-                    loading.classList.remove('hidden');
+                const loader = document.getElementById('loadingIndicator');
+                if (btn && loader) {
+                    btn.classList.add('opacity-80', 'cursor-not-allowed');
+                    loader.classList.remove('hidden');
                 }
             });
         }
 
-        // Password visibility toggles
-        const setupToggle = (toggleId, inputId) => {
-            const toggle = document.getElementById(toggleId);
-            const input = document.getElementById(inputId);
-            if (toggle && input) {
-                toggle.addEventListener('click', function() {
-                    const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-                    input.setAttribute('type', type);
-                    this.classList.toggle('fa-eye');
-                    this.classList.toggle('fa-eye-slash');
-                });
-            }
-        };
-
-        setupToggle('toggleNewPassword', 'new_password');
-        setupToggle('toggleConfirmPassword', 'confirm_password');
-    });
+        // Auto-focus logic
+        window.addEventListener('load', () => {
+            const primaryInput = document.getElementById('login_input') || document.getElementById('otp_code') || document.getElementById('new_password');
+            if (primaryInput) primaryInput.focus();
+        });
     </script>
 </body>
 </html>

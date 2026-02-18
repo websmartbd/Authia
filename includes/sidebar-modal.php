@@ -2,124 +2,165 @@
 // Get current page for active menu highlighting
 $current_page = basename($_SERVER['PHP_SELF']);
 ?>
-<!-- Responsive Sidebar -->
-<div id="sidebar" class="fixed md:relative inset-y-0 left-0 z-30 w-64 p-4 bg-gray-800 text-white transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out md:shadow-xl md:block md:h-auto h-full md:w-64 absolute md:static">
-  <div class="flex items-center justify-between mb-8">
-    <div class="flex items-center space-x-3">
-      <svg class="h-8 w-8 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-      </svg>
-      <span class="text-xl font-bold tracking-tight">Authenticator</span>
+
+<!-- Mobile Header -->
+<?php
+$page_titles = [
+    'dashboard.php' => 'Dashboard',
+    'domains.php' => 'Active Domains',
+    'add-domain.php' => 'Add Domain',
+    'edit-domain.php' => 'Edit Domain',
+    'expires.php' => 'Expired Domains',
+    'delete.php' => 'Deletion Queue',
+    'mail.php' => 'SMTP Configuration',
+    'change-password.php' => 'Security Settings'
+];
+$mobile_title = $page_titles[$current_page] ?? 'Authia Admin';
+?>
+<div class="md:hidden fixed top-0 inset-x-0 z-40 h-16 bg-white dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4">
+    <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20 z-10">
+        <i class="fas fa-shield-halved text-white text-xs"></i>
     </div>
-    <!-- Close button for mobile -->
-    <button id="close-sidebar" class="md:hidden text-gray-400 hover:text-white focus:outline-none transition duration-150">
-      <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-      </svg>
+    
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <span class="font-bold text-lg text-slate-900 dark:text-white truncate px-12"><?php echo $mobile_title; ?></span>
+    </div>
+
+    <button id="open-sidebar" class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-indigo-600 transition-colors z-10">
+        <i class="fas fa-bars"></i>
+    </button>
+</div>
+
+<!-- Responsive Sidebar -->
+<div id="sidebar" class="fixed md:relative inset-y-0 left-0 z-50 w-72 bg-slate-900 border-r border-slate-800 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col h-full shadow-2xl md:shadow-none flex-shrink-0">
+  
+  <!-- Logo Area -->
+  <div class="h-16 flex items-center px-6 border-b border-slate-800 bg-slate-950/50 backdrop-blur-sm">
+    <div class="flex items-center space-x-3">
+        <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
+            <i class="fas fa-shield-halved text-white text-sm"></i>
+        </div>
+        <span class="text-lg font-bold tracking-tight text-white font-sans">Authia</span>
+    </div>
+    <button id="close-sidebar" class="md:hidden ml-auto text-slate-400 hover:text-white transition focus:outline-none">
+      <i class="fas fa-times text-xl"></i>
     </button>
   </div>
 
   <!-- Navigation Links -->
-  <nav class="space-y-3">
-    <a href="dashboard" class="flex items-center px-4 py-3 rounded-lg transition duration-200 hover:bg-gray-700 <?php echo ($current_page == 'dashboard.php') ? 'bg-gray-700 text-white' : 'text-gray-300'; ?>">
-      <i class="fas fa-home text-lg mr-3"></i> 
-      <span>Dashboard</span>
+  <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-1">
+    <a href="dashboard" class="flex items-center px-4 py-3 rounded-lg transition-all duration-200 group <?php echo ($current_page == 'dashboard.php') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/20 ring-1 ring-indigo-500' : 'text-slate-400 hover:bg-slate-800 hover:text-white'; ?>">
+      <i class="fas fa-chart-pie w-6 <?php echo ($current_page == 'dashboard.php') ? 'text-indigo-200' : 'text-slate-500 group-hover:text-indigo-400'; ?> transition-colors"></i> 
+      <span class="font-medium text-sm">Dashboard</span>
     </a>
-    <a href="domains" class="flex items-center px-4 py-3 rounded-lg transition duration-200 hover:bg-gray-700 <?php echo ($current_page == 'domains.php') ? 'bg-gray-700 text-white' : 'text-gray-300'; ?>">
-      <i class="fas fa-globe mr-2"></i>All Domains
+    
+    <div class="pt-6 pb-2 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Management</div>
+
+    <a href="domains" class="flex items-center px-4 py-3 rounded-lg transition-all duration-200 group <?php echo ($current_page == 'domains.php') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/20 ring-1 ring-indigo-500' : 'text-slate-400 hover:bg-slate-800 hover:text-white'; ?>">
+      <i class="fas fa-globe w-6 <?php echo ($current_page == 'domains.php') ? 'text-indigo-200' : 'text-slate-500 group-hover:text-indigo-400'; ?> transition-colors"></i>
+      <span class="font-medium text-sm">active Domains</span>
     </a>
-    <a href="expires" class="flex items-center px-4 py-3 rounded-lg transition duration-200 hover:bg-gray-700 <?php echo ($current_page == 'expires.php') ? 'bg-gray-700 text-white' : 'text-gray-300'; ?>">
-      <i class="fas fa-calendar-times mr-2 text-lg mr-3"></i> 
-      <span>Expired Domains</span>
-    </a>
-    <a href="delete" class="flex items-center px-4 py-3 rounded-lg transition duration-200 hover:bg-gray-700 <?php echo ($current_page == 'delete.php') ? 'bg-gray-700 text-white' : 'text-gray-300'; ?>">
-      <i class="fas fa-trash-restore mr-2 text-lg mr-3"></i> 
-      <span>Flagged Delete</span>
-    </a>
-    <a href="add-domain" class="flex items-center px-4 py-3 rounded-lg transition duration-200 hover:bg-gray-700 <?php echo ($current_page == 'add-domain.php') ? 'bg-gray-700 text-white' : 'text-gray-300'; ?>">
-      <i class="fas fa-plus text-lg mr-3"></i> 
-      <span>Add New Domain</span>
+    
+    <a href="add-domain" class="flex items-center px-4 py-3 rounded-lg transition-all duration-200 group <?php echo ($current_page == 'add-domain.php') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/20 ring-1 ring-indigo-500' : 'text-slate-400 hover:bg-slate-800 hover:text-white'; ?>">
+      <i class="fas fa-plus-circle w-6 <?php echo ($current_page == 'add-domain.php') ? 'text-indigo-200' : 'text-slate-500 group-hover:text-indigo-400'; ?> transition-colors"></i> 
+      <span class="font-medium text-sm">Add Domain</span>
     </a>
 
-    <!-- Settings Menu Item with Sub-menu -->
-    <div class="nav-item <?php echo ($current_page == 'api-generate.php' || $current_page == 'change-password.php') ? 'bg-gray-700 rounded-lg' : ''; ?>">
-      <!-- Clickable header for Settings -->
-      <div class="clickable-menu-item flex items-center justify-between px-4 py-3 rounded-lg transition duration-200 hover:bg-gray-700 text-gray-300" id="settings-menu-toggle">
+    <div class="pt-6 pb-2 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Monitoring</div>
+
+    <a href="expires" class="flex items-center px-4 py-3 rounded-lg transition-all duration-200 group <?php echo ($current_page == 'expires.php') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/20 ring-1 ring-indigo-500' : 'text-slate-400 hover:bg-slate-800 hover:text-white'; ?>">
+      <i class="fas fa-clock w-6 <?php echo ($current_page == 'expires.php') ? 'text-indigo-200' : 'text-slate-500 group-hover:text-indigo-400'; ?> transition-colors"></i> 
+      <span class="font-medium text-sm">Expired</span>
+    </a>
+    
+    <a href="delete" class="flex items-center px-4 py-3 rounded-lg transition-all duration-200 group <?php echo ($current_page == 'delete.php') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/20 ring-1 ring-indigo-500' : 'text-slate-400 hover:bg-slate-800 hover:text-white'; ?>">
+      <i class="fas fa-trash-can w-6 <?php echo ($current_page == 'delete.php') ? 'text-indigo-200' : 'text-slate-500 group-hover:text-indigo-400'; ?> transition-colors"></i> 
+      <span class="font-medium text-sm">Deletion Queue</span>
+    </a>
+
+    <div class="pt-6 pb-2 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">System</div>
+
+    <!-- Settings Menu Item -->
+    <div class="space-y-1">
+      <button onclick="toggleSettingsMenu()" class="w-full flex items-center justify-between px-4 py-3 rounded-lg transition-all duration-200 text-slate-400 hover:bg-slate-800 hover:text-white group focus:outline-none">
         <div class="flex items-center">
-          <i class="fas fa-cog text-lg mr-3"></i> 
-          <span>Settings</span>
+          <i class="fas fa-gear w-6 text-slate-500 group-hover:text-indigo-400 transition-colors"></i> 
+          <span class="font-medium text-sm">Configuration</span>
         </div>
-        <!-- Arrow icon to indicate dropdown state -->
-        <svg class="w-4 h-4 transform transition-transform duration-200 text-gray-400 <?php echo ($current_page == 'api-generate.php' || $current_page == 'change-password.php') ? 'rotate-180' : ''; ?>" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-      </div>
+        <i id="settings-arrow" class="fas fa-chevron-down text-xs transition-transform duration-200 <?php echo ($current_page == 'change-password.php' || $current_page == 'mail.php') ? 'rotate-180' : ''; ?>"></i>
+      </button>
 
-      <!-- Sub-menu for Settings -->
-      <div class="sub-menu mt-1 ml-2 overflow-hidden transition-all duration-200 <?php echo ($current_page == 'change-password.php' || $current_page == 'mail.php') ? 'block' : 'hidden'; ?>">
-        <a href="mail" class="flex items-center py-2 px-4 rounded-md transition duration-200 hover:bg-gray-600 <?php echo ($current_page == 'mail.php') ? 'active text-white bg-gray-600' : 'text-gray-400'; ?>">
-          <i class="fas fa-envelope mr-2"></i> Email Settings
-        </a>
-        <a href="change-password" class="flex items-center py-2 px-4 rounded-md transition duration-200 hover:bg-gray-600 <?php echo ($current_page == 'change-password.php') ? 'active text-white bg-gray-600' : 'text-gray-400'; ?>">
-          <i class="fas fa-lock mr-2"></i> Change Password
-        </a>
-        <a href="logout" class="flex items-center py-2 px-4 rounded-md transition duration-200 hover:bg-gray-600 text-gray-400">
-          <i class="fas fa-sign-out-alt mr-2"></i> Logout
-        </a>
+      <div id="settings-submenu" class="pl-4 pr-2 space-y-1 overflow-hidden transition-all duration-300 <?php echo ($current_page == 'change-password.php' || $current_page == 'mail.php') ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'; ?>">
+        <div class="border-l border-slate-800 ml-5 pl-4 space-y-1 py-1">
+            <a href="mail" class="block py-2 text-sm transition-colors duration-200 <?php echo ($current_page == 'mail.php') ? 'text-white font-medium' : 'text-slate-500 hover:text-white'; ?>">
+            SMTP Settings
+            </a>
+            <a href="change-password" class="block py-2 text-sm transition-colors duration-200 <?php echo ($current_page == 'change-password.php') ? 'text-white font-medium' : 'text-slate-500 hover:text-white'; ?>">
+            Change Password
+            </a>
+        </div>
       </div>
     </div>
   </nav>
 
-    <!-- Documentation link at the bottom -->
-    <div class="absolute bottom-6 left-0 w-full px-4">
-      <a href="doc" class="flex items-center justify-center w-full px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150">
-        <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-        </svg>
-        Documentation
-      </a>
+  <!-- Bottom Actions -->
+  <div class="p-4 border-t border-slate-800 bg-slate-950/50 backdrop-blur-sm">
+    <div class="grid grid-cols-3 gap-2">
+        <!-- Theme Toggle -->
+        <button id="theme-toggle-btn" class="flex items-center justify-center py-2.5 rounded-lg border border-slate-800 bg-slate-900 text-slate-400 hover:text-white hover:border-slate-700 transition group" title="Toggle Theme">
+            <span class="dark:hidden"><i class="fas fa-sun text-amber-500"></i></span>
+            <span class="hidden dark:block"><i class="fas fa-moon text-indigo-400"></i></span>
+        </button>
+
+        <!-- Docs -->
+        <a href="docs" target="_blank" class="flex items-center justify-center py-2.5 rounded-lg border border-slate-800 bg-slate-900 text-slate-400 hover:text-blue-400 hover:border-slate-700 transition" title="Documentation">
+            <i class="fas fa-book-open"></i>
+        </a>
+
+        <!-- Logout -->
+        <a href="logout" class="flex items-center justify-center py-2.5 rounded-lg bg-red-500/10 border border-transparent hover:border-red-500/50 text-red-500 hover:bg-red-500 hover:text-white transition" title="Logout">
+            <i class="fas fa-sign-out-alt"></i>
+        </a>
     </div>
+  </div>
 </div>
 
-    <!-- Main content area -->
-    <div class="flex-1 flex flex-col overflow-hidden">
-      <!-- Header for mobile -->
-      <header class="flex items-center justify-between md:hidden bg-white shadow-sm p-4">
-        <div class="flex items-center">
-          <?php if (isset($page_icon)): ?>
-            <?php echo $page_icon; ?>
-          <?php else: ?>
-            <svg class="h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9' />
-            </svg>
-          <?php endif; ?>
-          <h1 class="ml-3 text-xl font-bold text-gray-900"><?php echo isset($page_title) ? $page_title : 'Authenticator'; ?></h1>
-        </div>
-        <button id="open-sidebar" class="text-gray-500 hover:text-gray-600 focus:outline-none">
-          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 6h16M4 12h16M4 18h16' />
-          </svg>
-        </button>
-      </header>
-
 <!-- Mobile Backdrop -->
-<div id="sidebar-backdrop" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-20 hidden md:hidden transition-opacity duration-300 opacity-0" aria-hidden="true"></div>
+<div id="sidebar-backdrop" class="fixed inset-0 bg-slate-950/80 z-40 hidden transition-opacity duration-300 opacity-0 backdrop-blur-sm"></div>
 
-<!-- Sidebar JavaScript -->
 <script>
-  // Sidebar toggle functionality
+  // Theme Toggle Logic
+  const themeBtn = document.getElementById('theme-toggle-btn');
+  
+  function updateThemeIcon() {
+      // Icon updating handled by CSS classes (dark:hidden etc)
+  }
+
+  function toggleTheme() {
+      if (document.documentElement.classList.contains('dark')) {
+          document.documentElement.classList.remove('dark');
+          localStorage.setItem('theme', 'light');
+      } else {
+          document.documentElement.classList.add('dark');
+          localStorage.setItem('theme', 'dark');
+      }
+      updateThemeIcon();
+  }
+
+  themeBtn?.addEventListener('click', toggleTheme);
+
+  // Sidebar Logic
   const sidebar = document.getElementById('sidebar');
-  const openSidebarBtn = document.getElementById('open-sidebar');
-  const closeSidebarBtn = document.getElementById('close-sidebar');
   const backdrop = document.getElementById('sidebar-backdrop');
-  const settingsMenuToggle = document.getElementById('settings-menu-toggle');
-  const settingsSubMenu = document.querySelector('#settings-menu-toggle + .sub-menu');
+  const closeBtn = document.getElementById('close-sidebar');
+  const openBtn = document.getElementById('open-sidebar'); // Might be in parent file
 
   function openSidebar() {
     sidebar.classList.remove('-translate-x-full');
     backdrop.classList.remove('hidden');
-    // small delay to allow display:block to apply before opacity transition
-    setTimeout(() => {
-        backdrop.classList.remove('opacity-0');
-    }, 10);
+    // Force reflow
+    void sidebar.offsetWidth; 
+    backdrop.classList.remove('opacity-0');
   }
 
   function closeSidebar() {
@@ -130,27 +171,24 @@ $current_page = basename($_SERVER['PHP_SELF']);
     }, 300);
   }
 
-  if (openSidebarBtn) {
-      openSidebarBtn.addEventListener('click', openSidebar);
-  }
+  // Event Listeners
+  if(openBtn) openBtn.addEventListener('click', openSidebar);
+  if(closeBtn) closeBtn.addEventListener('click', closeSidebar);
+  if(backdrop) backdrop.addEventListener('click', closeSidebar);
 
-  if (closeSidebarBtn) {
-      closeSidebarBtn.addEventListener('click', closeSidebar);
+  // Settings Menu Logic
+  window.toggleSettingsMenu = function() {
+    const submenu = document.getElementById('settings-submenu');
+    const arrow = document.getElementById('settings-arrow');
+    
+    if (submenu.classList.contains('max-h-0')) {
+        submenu.classList.remove('max-h-0', 'opacity-0');
+        submenu.classList.add('max-h-40', 'opacity-100');
+        arrow.classList.add('rotate-180');
+    } else {
+        submenu.classList.add('max-h-0', 'opacity-0');
+        submenu.classList.remove('max-h-40', 'opacity-100');
+        arrow.classList.remove('rotate-180');
+    }
   }
-  
-  if (backdrop) {
-      backdrop.addEventListener('click', closeSidebar);
-  }
-
-  // Toggle settings sub-menu visibility on click
-  if (settingsMenuToggle && settingsSubMenu) {
-    settingsMenuToggle.addEventListener('click', () => {
-      settingsSubMenu.classList.toggle('hidden');
-      // Rotate arrow icon
-      const arrowIcon = settingsMenuToggle.querySelector('svg');
-      if (arrowIcon) {
-        arrowIcon.classList.toggle('rotate-180');
-      }
-    });
-  }
-</script> 
+</script>

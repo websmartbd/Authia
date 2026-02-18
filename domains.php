@@ -10,14 +10,9 @@ SessionSecurity::init();
 require_once 'config/config.php';
 
 if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
-    // Redirect to login page if user is not authenticated
     header("Location: login");
     exit;
 }
-
-// Set page title and icon for mobile header
-$page_title = 'All Domains';
-$page_icon = '<i class="fas fa-globe text-indigo-600 text-2xl"></i>';
 
 $conn = new mysqli($host, $username, $password, $database);
 
@@ -36,7 +31,6 @@ $sql = "SELECT d.id, d.name, d.email, d.domain, d.active, d.message, d.`delete`,
         WHERE (d.license_type = 'lifetime' OR d.expiry_date >= CURDATE())
         AND d.`delete` != 'yes'";
 
-// Add search condition if search term is provided using prepared statement
 if (!empty($search)) {
     $sql .= " AND (d.name LIKE ? OR d.email LIKE ? OR d.domain LIKE ?)";
     $search_param = "%{$search}%";
@@ -49,10 +43,8 @@ if (!empty($search)) {
     $result = $conn->query($sql);
 }
 
-
 // Handle regenerate key action with CSRF protection
 if (isset($_GET['regenerate_key'])) {
-    // Validate CSRF token
     if (!isset($_GET['csrf_token']) || !CSRFProtection::validateToken($_GET['csrf_token'])) {
         die('Security validation failed');
     }
@@ -79,9 +71,6 @@ if (isset($_GET['regenerate_key'])) {
     header("Location: domains.php");
     exit;
 }
-
-$conn->close();
-
 ?>
 
 <!DOCTYPE html>
@@ -89,443 +78,260 @@ $conn->close();
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Domains - Authenticator</title>
+  <title>Domains - Authia</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #f3f4f6;
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                fontFamily: {
+                    sans: ['Inter', 'sans-serif'],
+                    mono: ['JetBrains Mono', 'monospace'],
+                },
+                colors: {
+                    slate: {
+                        850: '#152033',
+                        950: '#020617',
+                    }
+                }
+            }
+        }
     }
-    
-    /* Sidebar styles */
-    .nav-item.active .sub-menu-link.active {
-      font-weight: 600;
-      color: #ffffff;
+  </script>
+  <script>
+    if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark')
+    } else {
+        document.documentElement.classList.remove('dark')
     }
-    
-    .nav-item .sub-menu-link {
-      padding-left: 2.5rem;
-    }
-    
-    .clickable-menu-item {
-      cursor: pointer;
-    }
-    
-    /* Card hover effects (might still be used by mobile view) */
-    .domain-card {
-      transition: all 0.2s ease-in-out;
-    }
-    
-    .domain-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    }
-    
-    /* Custom scrollbar */
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-    
-    ::-webkit-scrollbar-track {
-      background: #f1f1f1;
-    }
-    
-    ::-webkit-scrollbar-thumb {
-      background: #c5c5c5;
-      border-radius: 4px;
-    }
-    
-    ::-webkit-scrollbar-thumb:hover {
-      background: #a3a3a3;
-    }
-
-    /* Ensure consistent table cell padding */
-    .domain-table td {
-      padding-top: 1rem;
-      padding-bottom: 1rem;
-    }
-  </style>
+  </script>
 </head>
-<body class="bg-gray-50">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
 
-  <div class="flex h-screen bg-gray-50 overflow-hidden">
+  <div class="flex h-screen overflow-hidden">
     <?php include 'includes/sidebar-modal.php'; ?>
 
     <!-- Main content area -->
     <div class="flex-1 flex flex-col overflow-hidden">
-
-      <!-- Main content body -->
-      <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4 sm:p-6 md:p-8">
-        <!-- Page header -->
-        <div class="mb-8 hidden md:block">
-          <h1 class="text-2xl font-bold text-gray-900 mb-2">All Domains</h1>
-          <p class="text-sm text-gray-600">View and manage all your registered domains</p>
-        </div>
+      <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 pt-20 md:p-8">
         
-        <!-- Search Bar -->
-        <div class="mb-8">
-          <form method="GET" class="flex items-center">
-            <div class="flex-1">
-              <div class="relative rounded-l-lg shadow-sm">
-                <input type="text" 
-                       name="search" 
-                       value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>"
-                       class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-4 pr-4 py-3 text-base border border-gray-300 rounded-l-lg rounded-r-none" 
-                       placeholder="Search domains, emails, or names...">
-              </div>
-            </div>
-            <div class="flex">
-              <button type="submit" 
-                      class="inline-flex items-center px-4 py-3 border border-transparent text-sm font-medium rounded-r-lg shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
-                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-                </svg>
-              </button>
+        <!-- Header -->
+        <div class="flex mb-8 flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="hidden md:block">
+            <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Active Domains</h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400">Manage your active software licenses.</p>
+          </div>
+          
+          <!-- Search -->
+          <form method="GET" class="relative w-full md:max-w-xs">
+            <input type="text" name="search" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>"
+                   class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block pl-10 p-2.5 outline-none shadow-sm transition-all" 
+                   placeholder="Search domains...">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-search text-slate-400"></i>
             </div>
           </form>
         </div>
 
-        <!-- Domain List -->
-        <div class="bg-white shadow-md rounded-xl p-6 border border-gray-100">
-          <div class="flex justify-between items-center mb-6">
-            <h2 class="text-lg font-semibold text-gray-900">Registered Domains</h2>
-          </div>
+        <!-- Domain Table -->
+        <div class="bg-white dark:bg-slate-900 shadow-sm rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
           
-          <!-- Desktop Table View -->
-          <div class="hidden md:block">
-            <div class="flex flex-col">
-              <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                  <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                    <table class="min-w-full divide-y divide-gray-200 domain-table">
-                      <thead class="bg-gray-50">
-                        <tr>
-                          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Domain</th>
-                          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">API Key</th>
-                          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">License</th>
-                          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expires</th>
-                          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
-                          <th scope="col" class="relative px-6 py-3">
-                            <span class="sr-only">Actions</span>
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody class="bg-white divide-y divide-gray-200">
-                        <?php
-                        if ($result->num_rows > 0) {
-                          $result->data_seek(0);
-                          while ($row = $result->fetch_assoc()) {
-                            $is_inactive = ($row['active'] == 0);
-                            $row_class = $is_inactive ? 'bg-gray-50' : 'bg-white';
-                            
-                            echo "<tr class='{$row_class} transition-colors duration-200 hover:bg-gray-50'>";
-                            // Domain
-                            echo   "<td class='px-6 py-4 text-sm font-medium text-gray-900'>" . htmlspecialchars($row["domain"]) . "</td>";
-                            // API Key
-                            echo   "<td class='px-6 py-4 text-sm text-gray-500'>";
-                            echo     "<div class='flex items-center space-x-2'>";
-                            echo       "<code class='bg-gray-100 px-2 py-1 rounded text-xs truncate max-w-[150px]'>" . htmlspecialchars($row["api_key"] ?? 'Not Generated') . "</code>";
-                            echo       "<button onclick='copyToClipboard(\"" . htmlspecialchars($row["api_key"] ?? '') . "\", this)' class='text-indigo-600 hover:text-indigo-900 focus:outline-none flex-shrink-0 transition-colors' title='Copy API Key'>";
-                            echo         "<i class='fas fa-copy'></i>";
-                            echo       "</button>";
-                            echo     "</div>";
-                            echo   "</td>";
-                            // License Type
-                            echo   "<td class='px-6 py-4 whitespace-nowrap text-sm text-gray-900'><span class='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium " . ($row['license_type'] === 'lifetime' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800') . " capitalize'>" . htmlspecialchars($row["license_type"] ?? 'N/A') . "</span></td>";
-                            // Expiry Date
-                            echo   "<td class='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>" . ($row["license_type"] === 'lifetime' ? 'Never' : ($row["expiry_date"] ? date('M d, Y', strtotime($row["expiry_date"])) : 'N/A')) . "</td>";
-                            // Details
-                            echo   "<td class='px-6 py-4 whitespace-nowrap text-sm text-gray-900'>";
-                            echo     "<button onclick='showViewModal(\"" . $row['id'] . "\")' class='text-indigo-600 hover:text-indigo-900 text-sm font-medium transition-colors'>View</button>";
-                            echo   "</td>";
-                            // Actions
-                            echo   "<td class='px-6 py-4 whitespace-nowrap text-right text-sm font-medium'>";
-                            echo     "<div class='flex items-center justify-end space-x-3'>";
-                            echo       "<button onclick='confirmAction(\"regenerate\", " . $row['id'] . ")' class='text-green-600 hover:text-green-900 focus:outline-none transition-colors' title='Generate New Key'><i class='fas fa-sync-alt'></i></button>";
-                            echo       "<a href='edit-domain?id=" . $row['id'] . "' class='text-indigo-600 hover:text-indigo-900 transition-colors' title='Edit'><i class='fas fa-edit'></i></a>";
-                            echo     "</div>";
-                            echo   "</td>";
-                            echo "</tr>";
-                          }
-                        } else {
-                          echo "<tr><td colspan='6' class='px-6 py-4 whitespace-nowrap text-center text-gray-500'>No domains found</td></tr>";
-                        }
-                        ?>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <!-- Desktop Table -->
+          <div class="hidden md:block overflow-x-auto">
+            <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
+              <thead class="bg-slate-50 dark:bg-slate-950">
+                <tr>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Domain</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">API Key</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">License</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Expires</th>
+                  <th scope="col" class="px-6 py-3 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+                <?php
+                if ($result->num_rows > 0) {
+                  $result->data_seek(0);
+                  while ($row = $result->fetch_assoc()) {
+                    $is_inactive = ($row['active'] == 0);
+                    $opacity_class = $is_inactive ? 'opacity-60' : '';
+                    ?>
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors <?php echo $opacity_class; ?>">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-8 w-8 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                                    <i class="fas fa-globe text-xs"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-slate-900 dark:text-white"><?php echo htmlspecialchars($row["domain"]); ?></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center space-x-2 group cursor-pointer" onclick="copyToClipboard('<?php echo htmlspecialchars($row["api_key"] ?? ''); ?>', this)">
+                                <code class="text-xs font-mono bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-2 py-1 rounded border border-slate-200 dark:border-slate-700 max-w-[120px] truncate">
+                                    <?php echo htmlspecialchars($row["api_key"] ?? 'Not Generated'); ?>
+                                </code>
+                                <i class="fas fa-copy text-slate-400 group-hover:text-indigo-500 transition-colors text-xs"></i>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <?php echo $row['license_type'] === 'lifetime' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300' : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'; ?> capitalize">
+                                <?php echo htmlspecialchars($row["license_type"] ?? 'N/A'); ?>
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
+                            <?php echo ($row["license_type"] === 'lifetime' ? '<span class="text-emerald-600 dark:text-emerald-400 font-medium">Never</span>' : ($row["expiry_date"] ? date('M d, Y', strtotime($row["expiry_date"])) : 'N/A')); ?>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <div class="flex items-center justify-end space-x-3">
+                                <button onclick="showViewModal('<?php echo $row['id']; ?>')" class="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"><i class="fas fa-eye"></i></button>
+                                <button onclick="confirmAction('regenerate', <?php echo $row['id']; ?>)" class="text-slate-400 hover:text-green-600 dark:hover:text-green-400 transition-colors"><i class="fas fa-sync-alt"></i></button>
+                                <a href="edit-domain?id=<?php echo $row['id']; ?>" class="text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"><i class="fas fa-pen"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php
+                  }
+                } else {
+                  echo '<tr><td colspan="5" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">No domains found matching your criteria.</td></tr>';
+                }
+                ?>
+              </tbody>
+            </table>
           </div>
 
-          <!-- Mobile Card View -->
-          <div class="md:hidden space-y-4">
+          <!-- Mobile Cards -->
+          <div class="md:hidden p-4 space-y-4">
             <?php
             if ($result->num_rows > 0) {
               $result->data_seek(0);
               while ($row = $result->fetch_assoc()) {
-                $is_inactive = ($row['active'] == 0);
-            ?>
-              <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 <?php echo $is_inactive ? 'opacity-75' : ''; ?>">
-                <div class="flex justify-between items-start mb-3">
-                  <div>
-                    <h3 class="text-lg font-semibold text-gray-900 break-all"><?php echo htmlspecialchars($row["domain"]); ?></h3>
-                    <p class="text-sm text-gray-500"><?php echo htmlspecialchars($row["email"] ?? 'No Email'); ?></p>
-                  </div>
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <?php echo $row['license_type'] === 'lifetime' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'; ?> capitalize">
-                    <?php echo htmlspecialchars($row["license_type"] ?? 'N/A'); ?>
-                  </span>
-                </div>
-                
-                <div class="space-y-3 mb-4">
-                  <div class="flex justify-between text-sm border-b border-gray-50 pb-2">
-                    <span class="text-gray-500">Expires:</span>
-                    <span class="font-medium text-gray-900"><?php echo ($row["license_type"] === 'lifetime' ? 'Never' : ($row["expiry_date"] ? date('M d, Y', strtotime($row["expiry_date"])) : 'N/A')); ?></span>
-                  </div>
-                  
-                  <div class="bg-gray-50 rounded p-2 text-xs">
-                    <p class="text-gray-500 mb-1">API Key:</p>
-                    <div class="flex items-center justify-between">
-                      <code class="text-indigo-600 font-mono truncate mr-2 select-all"><?php echo htmlspecialchars($row["api_key"] ?? 'Not Generated'); ?></code>
-                      <button onclick="copyToClipboard('<?php echo htmlspecialchars($row["api_key"] ?? ''); ?>', this)" class="text-gray-400 hover:text-indigo-600">
-                        <i class="fas fa-copy"></i>
-                      </button>
+                ?>
+                <div class="bg-slate-50 dark:bg-slate-950 rounded-lg p-4 border border-slate-200 dark:border-slate-800">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <h3 class="font-bold text-slate-900 dark:text-white"><?php echo htmlspecialchars($row["domain"]); ?></h3>
+                        </div>
+                        <span class="text-[10px] uppercase font-bold px-2 py-1 rounded bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300"><?php echo htmlspecialchars($row["license_type"]); ?></span>
                     </div>
-                  </div>
-                </div>
+                    
+                    <div class="space-y-2 mb-4">
+                        <div class="bg-white dark:bg-slate-900 rounded-lg p-3 border border-slate-200 dark:border-slate-800 mb-2">
+                            <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Key:</div>
+                            <div class="flex items-center justify-between cursor-pointer group" onclick="copyToClipboard('<?php echo htmlspecialchars($row["api_key"] ?? ''); ?>', this)">
+                                <code class="font-mono text-sm text-indigo-600 dark:text-indigo-400 truncate mr-2"><?php echo htmlspecialchars($row["api_key"] ?? ''); ?></code>
+                                <i class="fas fa-copy text-slate-400 group-hover:text-indigo-500 transition-colors"></i>
+                            </div>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-slate-500">Expires:</span>
+                            <span class="text-slate-700 dark:text-slate-300"><?php echo ($row["license_type"] === 'lifetime' ? 'Never' : ($row["expiry_date"] ? date('M d, Y', strtotime($row["expiry_date"])) : 'N/A')); ?></span>
+                        </div>
+                    </div>
 
-                <div class="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-gray-100">
-                  <button onclick="showViewModal('<?php echo $row['id']; ?>')" class="flex items-center justify-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                    <i class="fas fa-eye mr-2"></i> View
-                  </button>
-                  <button onclick="confirmAction('regenerate', <?php echo $row['id']; ?>)" class="flex items-center justify-center px-3 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
-                    <i class="fas fa-sync-alt mr-2"></i> Key
-                  </button>
-                  <a href="edit-domain?id=<?php echo $row['id']; ?>" class="flex items-center justify-center px-3 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
-                    <i class="fas fa-edit mr-2"></i> Edit
-                  </a>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="showViewModal('<?php echo $row['id']; ?>')" class="py-2 text-xs font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded hover:bg-slate-50 dark:hover:bg-slate-800">View</button>
+                        <button onclick="confirmAction('regenerate', <?php echo $row['id']; ?>)" class="py-2 text-xs font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-green-600 dark:text-green-400 rounded hover:bg-slate-50 dark:hover:bg-slate-800">Key</button>
+                        <a href="edit-domain?id=<?php echo $row['id']; ?>" class="block text-center py-2 text-xs font-bold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-blue-600 dark:text-blue-400 rounded hover:bg-slate-50 dark:hover:bg-slate-800">Edit</a>
+                    </div>
                 </div>
-              </div>
-            <?php
+                <?php
               }
             } else {
-              echo "<div class='text-center py-8 text-gray-500'>No domains found matching your criteria.</div>";
+                echo '<div class="text-center text-slate-500 py-4">No domains found.</div>';
             }
             ?>
           </div>
-
-          <?php if ($result->num_rows == 0): ?>
-             <!-- Fallback message for no domains visible on mobile if not already shown -->
-              <div class='text-center py-12 text-gray-500 col-span-full bg-gray-50 rounded-lg border border-dashed border-gray-300 md:hidden'>
-                  <svg class='mx-auto h-12 w-12 text-gray-400 mb-3' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-                  <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' />
-                  </svg>
-                  <p class='text-lg font-medium'>No domains found</p>
-                  <p class='mt-1'>Add your first domain to get started</p>
-                  <a href='add-domain.php' class='mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700'>
-                  <svg class='h-4 w-4 mr-2' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-                  <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M12 4v16m8-8H4' />
-                  </svg>
-                  Add Domain</a>
-              </div>
-          <?php endif; ?>
-
-
         </div>
       </main>
     </div>
   </div>
 
+  <?php
+    // Modals
+    if ($result->num_rows > 0) {
+        $result->data_seek(0);
+        while ($row = $result->fetch_assoc()) {
+            include 'includes/view-modal.php';
+        }
+    }
+  ?>
+
+  <!-- Confirmation Modal -->
+  <div id="confirmModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4">
+    <div class="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity" onclick="hideConfirmModal()"></div>
+    <div class="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-sm w-full p-6 border border-slate-200 dark:border-slate-800 transform shadow-xl transition-all">
+        <div class="text-center">
+            <div id="confirmIconContainer" class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/30 mb-4">
+                <i id="confirmIcon" class="text-2xl text-indigo-600 dark:text-indigo-400"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white" id="confirmTitle">Confirm Action</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-2" id="confirmDescription">Are you sure?</p>
+        </div>
+        <div class="mt-6 flex gap-3">
+            <button onclick="hideConfirmModal()" class="flex-1 py-2.5 px-4 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition">Cancel</button>
+            <button id="confirmBtn" onclick="executeConfirmAction()" class="flex-1 py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-500/20 transition">Confirm</button>
+        </div>
+    </div>
+  </div>
+
   <script>
     const csrfToken = "<?php echo CSRFProtection::getToken(); ?>";
-    function toggleDropdown(id) {
-      const dropdown = document.getElementById(id);
-      dropdown.classList.toggle('hidden');
+    
+    // Copy Clipboard Logic
+    function copyToClipboard(text, btn) {
+        navigator.clipboard.writeText(text).then(() => {
+            const icon = btn.querySelector('i');
+            const originalClass = icon.className;
+            icon.className = 'fas fa-check text-emerald-500';
+            setTimeout(() => { icon.className = originalClass; }, 2000);
+        });
     }
 
+    // Modal Logic
     function showViewModal(id) {
-      const modal = document.getElementById('viewModal' + id);
-      const container = modal.querySelector('.modal-container');
-      
-      // First make the modal visible but transparent
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-      
-      // Force a reflow to enable the transition
-      void modal.offsetWidth;
-      
-      // Add opacity and transform the container
-      modal.classList.add('bg-opacity-75');
-      container.classList.add('sm:scale-100', 'opacity-100');
-      container.classList.remove('opacity-0', 'sm:scale-95');
+        const modal = document.getElementById('viewModal' + id);
+        modal.classList.remove('hidden');
+        setTimeout(() => modal.querySelector('.modal-container').classList.remove('opacity-0', 'scale-95'), 10);
     }
-
+    
     function hideViewModal(id) {
-      const modal = document.getElementById('viewModal' + id);
-      const container = modal.querySelector('.modal-container');
-      
-      // Start the fade out animation
-      modal.classList.remove('bg-opacity-75');
-      container.classList.add('opacity-0', 'sm:scale-95');
-      container.classList.remove('sm:scale-100');
-      
-      // After animation completes, hide the modal
-      setTimeout(() => {
-          modal.classList.add('hidden');
-          modal.classList.remove('flex');
-      }, 300);
+        const modal = document.getElementById('viewModal' + id);
+        modal.querySelector('.modal-container').classList.add('opacity-0', 'scale-95');
+        setTimeout(() => modal.classList.add('hidden'), 300);
     }
 
-    // Close dropdowns when clicking outside
-    window.onclick = function(event) {
-      // Check if the click was outside of a dropdown or its toggle button
-      if (!event.target.closest('.domain-actions-dropdown') && !event.target.closest('.domain-actions-toggle')) {
-        const dropdowns = document.getElementsByClassName('domain-actions-dropdown');
-        for (let i = 0; i < dropdowns.length; i++) {
-          const openDropdown = dropdowns[i];
-          if (!openDropdown.classList.contains('hidden')) {
-            openDropdown.classList.add('hidden');
-          }
-        }
-      }
-    }
-
+    // Confirm Modal Logic
     let currentActionUrl = '';
-
+    
     function confirmAction(type, id) {
         const modal = document.getElementById('confirmModal');
         const title = document.getElementById('confirmTitle');
         const desc = document.getElementById('confirmDescription');
-        const confirmBtn = document.getElementById('confirmBtn');
-        const iconContainer = document.getElementById('confirmIconContainer');
         const icon = document.getElementById('confirmIcon');
-
+        
         if (type === 'regenerate') {
-            title.innerText = 'Regenerate API Key?';
-            desc.innerText = 'Are you sure you want to generate a new key? The current key will be deactivated immediately and any connected applications will lose access.';
-            confirmBtn.innerText = 'Regenerate Key';
-            confirmBtn.className = 'w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm transition-all duration-200';
-            iconContainer.className = 'mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10';
-            icon.className = 'fas fa-sync-alt text-indigo-600';
+            title.innerText = 'Regenerate API Key';
+            desc.innerText = 'This will invalidate the current key immediately.';
+            icon.className = 'fas fa-sync-alt text-indigo-600 dark:text-indigo-400';
             currentActionUrl = 'domains.php?regenerate_key=' + id + '&csrf_token=' + csrfToken;
         }
 
         modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        setTimeout(() => {
-            modal.querySelector('.bg-gray-500').classList.add('opacity-75');
-            const container = modal.querySelector('.transform');
-            container.classList.remove('opacity-0', 'translate-y-4', 'sm:translate-y-0', 'sm:scale-95');
-            container.classList.add('opacity-100', 'translate-y-0', 'sm:scale-100');
-        }, 10);
     }
 
     function hideConfirmModal() {
-        const modal = document.getElementById('confirmModal');
-        const container = modal.querySelector('.transform');
-        
-        modal.querySelector('.bg-gray-500').classList.remove('opacity-75');
-        container.classList.add('opacity-0', 'translate-y-4', 'sm:translate-y-0', 'sm:scale-95');
-        container.classList.remove('opacity-100', 'translate-y-0', 'sm:scale-100');
-        
-        setTimeout(() => {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }, 300);
+        document.getElementById('confirmModal').classList.add('hidden');
     }
 
     function executeConfirmAction() {
-        if (currentActionUrl) {
-            window.location.href = currentActionUrl;
-        }
+        if (currentActionUrl) window.location.href = currentActionUrl;
     }
-
-    function copyToClipboard(text, btn) {
-        if (!text || text === 'Not Generated') return;
-        
-        navigator.clipboard.writeText(text).then(() => {
-            // Success feedback
-            const originalIcon = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-check text-green-500"></i>';
-            setTimeout(() => {
-                btn.innerHTML = originalIcon;
-            }, 2000);
-        }).catch(err => {
-            console.error('Failed to copy: ', err);
-            // Fallback for older browsers
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            try {
-                document.execCommand('copy');
-                const originalIcon = btn.innerHTML;
-                btn.innerHTML = '<i class="fas fa-check text-green-500"></i>';
-                setTimeout(() => {
-                    btn.innerHTML = originalIcon;
-                }, 2000);
-            } catch (err) {
-                console.error('Fallback: Oops, unable to copy', err);
-            }
-            document.body.removeChild(textArea);
-        });
-    }
-
   </script>
-
-  <!-- Confirmation Modal -->
-  <div id="confirmModal" class="fixed inset-0 z-50 hidden items-center justify-center overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0 w-full">
-      <!-- Overlay -->
-      <div class="fixed inset-0 bg-gray-500 bg-opacity-0 transition-opacity duration-300 ease-out" aria-hidden="true" onclick="hideConfirmModal()"></div>
-
-      <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
-      <!-- Modal panel -->
-      <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95 duration-300 ease-out">
-        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-          <div class="sm:flex sm:items-start">
-            <div id="confirmIconContainer" class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full sm:mx-0 sm:h-10 sm:w-10">
-              <i id="confirmIcon" class="text-xl"></i>
-            </div>
-            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-              <h3 class="text-xl leading-6 font-bold text-gray-900" id="confirmTitle">Confirm Action</h3>
-              <div class="mt-2">
-                <p class="text-sm text-gray-500" id="confirmDescription">Are you sure you want to proceed with this action?</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="bg-gray-50 px-4 py-4 sm:px-6 sm:flex sm:flex-row-reverse">
-          <button type="button" id="confirmBtn" onclick="executeConfirmAction()" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white sm:ml-3 sm:w-auto sm:text-sm transition-all duration-200">
-            Confirm
-          </button>
-          <button type="button" onclick="hideConfirmModal()" class="mt-3 w-full inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-all duration-200">
-            Cancel
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- View Modals -->
-  <?php
-  // Re-establish connection or ensure $conn is available if closed previously
-  // This assumes a new connection might be needed if dashboard.php closed it.
-  // A better approach might be to keep connection open or use a function.
-  // For simplicity, we'll assume $conn is either open or can be re-opened if needed.
-  
-  // Need to reset result pointer BEFORE fetching again for modals
-  if ($result->num_rows > 0) {
-      $result->data_seek(0);
-      while ($row = $result->fetch_assoc()) {
-          include 'includes/view-modal.php';
-      }
-  }
-  ?>
 </body>
-</html> 
+</html>
+<?php $conn->close(); ?>
