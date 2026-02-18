@@ -1,0 +1,41 @@
+# Set default index file
+DirectoryIndex dashboard.php
+
+# Prevent directory listing
+Options -Indexes
+
+RewriteEngine On
+
+# Map root to dashboard
+RewriteRule ^$ dashboard.php [L]
+
+# Remove .php extension from URL
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^([^/]+)$ $1.php [L]
+
+# Optional: Force trailing slash removal
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.+)/$ /$1 [R=301,L]
+
+# Secure sensitive files
+<FilesMatch "\.(sql|zip|log|txt|bak|old|swp|dist|env)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+<FilesMatch "^(\.htaccess|\.gitignore|composer\.(json|lock)|package(-lock)?\.json|SECURITY-STATUS\.md)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Protect sensitive directories
+RewriteRule ^(config|includes|.agent)/ - [F,L]
+
+# Set security headers via Apache as a fallback
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "no-referrer-when-downgrade"
+</IfModule>
