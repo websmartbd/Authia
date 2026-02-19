@@ -143,8 +143,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 z-0"></div>
         
         <div class="relative z-20 text-center px-12">
-            <div class="w-24 h-24 bg-indigo-500/10 rounded-3xl border border-indigo-500/20 flex items-center justify-center mx-auto mb-8 backdrop-blur-xl shadow-2xl shadow-indigo-500/10">
-                <i class="fas fa-cube text-4xl text-indigo-400"></i>
+            <div class="flex items-center justify-center mx-auto mb-8">
+                <img src="https://authia.hs.vc/security.png" alt="Authia Security" class="w-20 h-20 object-contain drop-shadow-lg">
             </div>
             <h1 class="text-4xl font-bold text-white mb-4 tracking-tight">Authia Admin</h1>
             <p class="text-indigo-200 text-lg max-w-md mx-auto leading-relaxed">Secure, scalable, and modern license management for your applications.</p>
@@ -159,8 +159,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12">
         <div class="w-full max-w-md space-y-8">
             <div class="text-center lg:text-left">
-                <div class="lg:hidden w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-indigo-600/20">
-                    <i class="fas fa-cube text-2xl text-white"></i>
+                <div class="lg:hidden flex items-center justify-center mx-auto mb-6">
+                    <img src="https://authia.hs.vc/security.png" alt="Authia Security" class="w-16 h-16 object-contain drop-shadow-md">
                 </div>
                 <h2 class="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Welcome back</h2>
                 <p class="mt-2 text-slate-500 dark:text-slate-400">Please enter your details to sign in.</p>
