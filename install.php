@@ -137,6 +137,13 @@ function pageHead($title) {
             .steps{
                 display:flex;
                 align-items:center;
+                overflow-x: auto;
+                scrollbar-width: none; /* Firefox */
+                -ms-overflow-style: none; /* IE/Edge */
+                padding-bottom: 2px;
+            }
+            .steps::-webkit-scrollbar {
+                display: none; /* Chrome/Safari */
             }
             .step{
                 display:flex;
@@ -361,6 +368,7 @@ function topbar($current) {
     ];
     echo '<div class="topbar">';
     echo '<div class="topbar-brand"><div class="topbar-brand-icon">' . icon('key') . '</div><div class="topbar-brand-name">Authia Installer</div></div>';
+    echo '<div style="font-size: 11px; color: var(--muted); margin-bottom: 8px; font-family: \'IBM Plex Mono\', monospace; text-transform: uppercase; letter-spacing: 0.05em;">Step ' . ($current === 'done' ? 4 : $current) . ' of 4</div>';
     echo '<div class="steps">';
     $i = 0;
     $total = count($steps);
